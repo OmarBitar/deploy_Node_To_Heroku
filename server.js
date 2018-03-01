@@ -7,36 +7,66 @@ var http = require('http');
 var port = process.env.port || 8080;
 //middleware to use for all requests
 adminRouter.use(function(req,res,next){
-    console.log('a new user visit');
+    console.log('a new user visitor');
     next();
 });
 
-app.route('/api')
-.get(function(req,res){
-    //set json object response
-    res.setHeader('Content-Type','text/plain');
+function getReturnData(req) {
+    var obj = {
+        headers: req.headers != null ? req.headers : "no header",
+        body: req.body != null ? req.body : "no body",
+        query: req.query != null ? req.query : "no query",
+        KEY: process.env.UNIQUE_KEY
+    }
+
+    return obj;
+}
+
+adminRouter.get('/get',function(req,res){
+ 
     res = res.status(200);
-    res.json({message: 'hello from the get'});
-})
+    res.type('text/plain');
+    
+   var obj = getReturnData(req);
+   res.send(obj);
 
-.post(function(req,res){
-    res.setHeader('Content-Type','text/plain');
+});
+
+adminRouter.post('/post',function(req,res){
+     
     res = res.status(200);
-    res.json({message: 'hello from the post'});
-})
+    res.type('text/plain');
+    
+   var obj = getReturnData(req);
+   res.send(obj);
 
-.put(function(req,res){
-    res.setHeader('Content-Type','text/plain');
+});
+
+adminRouter.put('/put',function(req,res){
+    
     res = res.status(200);
-    res.json({message: 'hello from the put'});
-})
+    res.type('text/plain');
+    
+   var obj = getReturnData(req);
+   res.send(obj);
 
-.delete(function(req,res){
-    res.setHeader('Content-Type','text/plain');
+});
+
+adminRouter.delete('/delete',function(req,res){
+    
     res = res.status(200);
-    res.json({message: 'hello from the delete'});
-})
+    res.type('text/plain');
+    
+   var obj = getReturnData(req);
+   res.send(obj);
 
+});
 
-app.use(adminRouter).listen(port);
+adminRouter.use('*', function (req, res, next) {
+    res.status(404).send({message: "Invalid method or path."});
+    next();
+});
+
+app.listen(port);
+app.use('/api',adminRouter);
 console.log('server created on port 8080');
